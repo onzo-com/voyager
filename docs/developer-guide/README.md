@@ -5,28 +5,64 @@ If you find a requirement that this doc does not capture, please submit an issue
 This document is intended to be relative to the branch in which it is found. It is guaranteed that requirements will change over time
 for the development branch, but release branches of Voyager should not change.
 
-### Building Voyager on local environment
+### Build Voyager
 Some of the Voyager development helper scripts rely on a fairly up-to-date GNU tools environment, so most recent Linux distros should
 work just fine out-of-the-box.
 
-### Go development environment
-Voyager is written in the go programming language. The release is built and tested on **go 1.8.3**. If you haven't set up a Go
-development environment, please follow [these instructions](https://golang.org/doc/code.html) to install the go tools.
+#### Setup GO
+Voyager is written in Google's GO programming language. Currently, Voyager is developed and tested on **go 1.8.3**. If you haven't set up a GO
+development environment, please follow [these instructions](https://golang.org/doc/code.html) to install GO.
+
+#### Download Source
 
 ```sh
-go get github.com/appscode/voyager
-cd $GOPATH/src/github.com/appscode/voyager
+$ go get github.com/appscode/voyager
+$ cd $(go env GOPATH)/src/github.com/appscode/voyager
 ```
 
-### Dependency management
-Voyager build and test scripts use glide to manage dependencies.
+#### Install Dev tools
+To install various dev tools for Voyager, run the following command:
+```sh
+$ ./hack/builddeps.sh
+```
 
-To install glide follow [these instructions](https://github.com/Masterminds/glide#install).
+#### Build Binary
+```
+$ ./hack/make.py
+$ voyager version
+```
 
-Currently the project includes all its required dependencies inside `vendor` to make things easier.
+#### Dependency management
+Voyager uses [Glide](https://github.com/Masterminds/glide) to manage dependencies. Dependencies are already checked in the `vendor` folder.
+If you want to update/add dependencies, run:
+```sh
+$ glide slow
+```
+
+#### Build Docker images
+To build and push your custom Docker image, follow the steps below. To release a new version of Voyager, please follow the [release guide](/docs/developer-guide/release.md).
 
 ```sh
-glide slow
+# Build Docker image
+$ ./hack/docker/voyager/setup.sh
+
+# Add docker tag for your repository
+$ docker tag appscode/voyager:<tag> <image>:<tag>
+
+# Push Image
+$ docker push <image>:<tag>
+```
+
+#### Build HAProxy
+We package HAProxy and [Kloader](https://github.com/appscode/kloader) into a Ubuntu 16.04 based Docker image.
+```sh
+$ ./hack/docker/haproxy/<version>/setup.sh
+$ ./hack/docker/haproxy/<version>/setup.sh push
+```
+
+#### Generate CLI Reference Docs
+```sh
+$ ./hack/gendocs/make.sh 
 ```
 
 ### Run Test
@@ -51,12 +87,12 @@ $ ./hack/make.py test unit
 
 #### Run e2e Test
 ```
-$ ./hack/make.py test minikube // Run Test against minikube, this requires minikube to be set up and started.
+$ ./hack/make.py test minikube # Run Test against minikube, this requires minikube to be set up and started.
 
-$ ./hack/make.py test e2e -cloud-provider=gce // Test e2e against gce cluster
+$ ./hack/make.py test e2e -cloud-provider=gce # Test e2e against gce cluster
 
-$ ./hack/make.py test integration -cloud-provider=gce // Run Integration test against gce
-                                                      // This requires voyager to be deployed in the cluster.
+$ ./hack/make.py test integration -cloud-provider=gce # Run Integration test against gce
+                                                      # This requires voyager to be deployed in the cluster.
 
 ```
 
@@ -83,14 +119,7 @@ kubectl create ns test-<any-name-you-want>
 ./hack/make.py test minikube -namespace test-<any-name-you-want> -max-test=1
 ```
 
-### Local Build
-To build Voyager using your local Go development environment (generate linux binaries):
-```sh
-$ ./hack/make.py build
-```
-Read full [Build instructions](build.md).
-
-<br><br>
+<br>
 ## Architecture
 Voyager works by implementing third party resource data watcher for kubernetes. It connects with k8s apiserver
 for specific events as ADD, UPDATE and DELETE. and perform required operations.
