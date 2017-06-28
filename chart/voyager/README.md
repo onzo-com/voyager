@@ -1,5 +1,5 @@
 # Voyager
-[Voyager](https://github.com/appscode/voyager)  provides controller for Ingress and Certificates for Kubernetes developed by AppsCode.
+[Voyager by AppsCode](https://github.com/appscode/voyager) is a secure Ingress Controller for Kubernetes.
 ## TL;DR;
 
 ```bash
@@ -49,7 +49,7 @@ The following tables lists the configurable parameters of the Voyager chart and 
 | `persistence.enabled`  |  Enable mounting cloud config                                 | `false`            |
 | `persistence.hostPath` |  Host mount path for cloud config                             | `/etc/kubernetes`  |
 | `rbac.install`         | install required rbac service account, roles and rolebindings | `false`            |
-| `rbac.apiVersion`      | rbac api version `v1alpha1|v1beta1`                           | `v1beta1`          |
+| `rbac.apiVersion`      | rbac api version v1alpha1&#124;v1beta1                        | `v1beta1`          |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example:
