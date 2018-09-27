@@ -243,7 +243,7 @@ func (r Ingress) IsValid(cloudProvider string) error {
 						sp443 = true
 					}
 				}
-				if !tp80 || sp443 {
+				if tp80 != sp443 {
 					return fmt.Errorf("failed to open port 443 on service for AWS cert manager for Ingress %s@%s", r.Name, r.Namespace)
 				}
 			}
